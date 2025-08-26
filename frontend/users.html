@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VMS - Users Management</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="dashboard.html" class="navbar-brand">VMS Dashboard</a>
+            <div class="navbar-menu">
+                <span id="adminName" class="text-muted"></span>
+                <button onclick="logout()" class="btn btn-danger btn-sm">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="layout-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <ul class="sidebar-menu">
+                <li class="sidebar-item">
+                    <a href="dashboard.html" class="sidebar-link">
+                        📊 Dashboard
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="users.html" class="sidebar-link active">
+                        👥 Users Management
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="clients.html" class="sidebar-link">
+                        🏢 Clients Management
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="d-flex justify-between align-center mb-3">
+                <h1>Users Management</h1>
+                <button onclick="showAddUserModal()" class="btn btn-primary">+ Add New User</button>
+            </div>
+
+            <!-- Pending Amount Card -->
+            <div class="card">
+                <div class="card-header">Total Pending Amount</div>
+                <div class="stat-value text-warning" id="totalPendingAmount">₹0</div>
+            </div>
+
+            <!-- Users Table -->
+            <div class="card">
+                <div class="card-header">All Users</div>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Mobile</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                                <th>Sum/Deficit</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTable">
+                            <tr>
+                                <td colspan="6" class="text-center text-muted">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add User Modal -->
+    <div id="addUserModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New User</h2>
+                <button class="modal-close" onclick="closeAddUserModal()">&times;</button>
+            </div>
+            <form id="addUserForm">
+                <div class="form-group">
+                    <label class="form-label">First Name</label>
+                    <input type="text" class="form-control" id="firstName" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Last Name</label>
+                    <input type="text" class="form-control" id="lastName" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Mobile (10 digits)</label>
+                    <input type="text" class="form-control" id="mobile" pattern="[0-9]{10}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Location</label>
+                    <input type="text" class="form-control" id="location" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Add User</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Transaction Modal -->
+    <div id="transactionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Transaction</h2>
+                <button class="modal-close" onclick="closeTransactionModal()">&times;</button>
+            </div>
+            <form id="transactionForm">
+                <input type="hidden" id="transactionUserId">
+                
+                <div class="form-group">
+                    <label class="form-label">Transaction Type</label>
+                    <select class="form-control" id="transactionType" onchange="toggleTransactionFields()">
+                        <option value="credit">Credit</option>
+                        <option value="debit">Debit</option>
+                    </select>
+                </div>
+
+                <!-- Credit Fields -->
+                <div id="creditFields">
+                    <div class="form-group">
+                        <label class="form-label">Credit Amount</label>
+                        <input type="number" class="form-control" id="creditAmount" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Round Off</label>
+                        <input type="number" class="form-control" id="roundOff" step="0.01" value="0">
+                    </div>
+                </div>
+
+                <!-- Debit Fields -->
+                <div id="debitFields" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">Number of Bags</label>
+                        <input type="number" class="form-control" id="bags" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Product Type</label>
+                        <input type="text" class="form-control" id="productType">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Weight (KG)</label>
+                        <input type="number" class="form-control" id="kg" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Cut Weight</label>
+                        <input type="number" class="form-control" id="cutWeight" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Amount per KG</label>
+                        <input type="number" class="form-control" id="amountPerKg" step="0.01">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Add Transaction</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- View Records Modal -->
+    <div id="recordsModal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h2>User Records</h2>
+                <button class="modal-close" onclick="closeRecordsModal()">&times;</button>
+            </div>
+            <div id="recordsContent">
+                <!-- Records will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/users.js"></script>
+</body>
+</html>
