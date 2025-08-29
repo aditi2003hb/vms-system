@@ -20,7 +20,6 @@ class AdminRegister(BaseModel):
 class AdminLogin(BaseModel):
     """Admin login schema"""
     name: str
-    uuid: str
     password: str
 
 class AdminResponse(BaseModel):

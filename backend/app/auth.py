@@ -80,11 +80,10 @@ async def get_current_admin(
     
     return admin
 
-def authenticate_admin(db: Session, name: str, uuid: str, password: str) -> Optional[models.Admin]:
-    """Authenticate an admin"""
+def authenticate_admin(db: Session, name: str, password: str) -> Optional[models.Admin]:
+    """Authenticate an admin using name and password only"""
     admin = db.query(models.Admin).filter(
-        models.Admin.name == name,
-        models.Admin.uuid == uuid
+        models.Admin.name == name
     ).first()
     
     if not admin:

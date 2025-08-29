@@ -26,11 +26,10 @@ def login_admin(
     login_data: schemas.AdminLogin,
     db: Session = Depends(database.get_db)
 ):
-    """Login admin with name, UUID, and password"""
+    """Login admin with name and password"""
     admin = auth.authenticate_admin(
-        db, 
-        login_data.name, 
-        login_data.uuid,
+        db,
+        login_data.name,
         login_data.password
     )
     

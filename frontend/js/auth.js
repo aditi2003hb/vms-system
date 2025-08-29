@@ -8,8 +8,6 @@ const formTitle = document.getElementById('formTitle');
 const toggleForm = document.getElementById('toggleForm');
 const toggleFormBack = document.getElementById('toggleFormBack');
 const alertContainer = document.getElementById('alertContainer');
-const registrationSuccess = document.getElementById('registrationSuccess');
-const generatedUuid = document.getElementById('generatedUuid');
 
 // Check for register parameter in URL
 const urlParams = new URLSearchParams(window.location.search);
@@ -31,7 +29,6 @@ toggleFormBack?.addEventListener('click', (e) => {
 function showRegisterForm() {
     loginForm.style.display = 'none';
     registerForm.style.display = 'block';
-    registrationSuccess.style.display = 'none';
     formTitle.textContent = 'Admin Registration';
     clearAlerts();
 }
@@ -39,7 +36,6 @@ function showRegisterForm() {
 function showLoginForm() {
     loginForm.style.display = 'block';
     registerForm.style.display = 'none';
-    registrationSuccess.style.display = 'none';
     formTitle.textContent = 'Admin Login';
     clearAlerts();
 }
@@ -87,13 +83,15 @@ registerForm?.addEventListener('submit', async (e) => {
         const data = await response.json();
         
         if (response.ok) {
-            // Show success message with UUID
+            // Show success message
             registerForm.style.display = 'none';
-            registrationSuccess.style.display = 'block';
-            generatedUuid.textContent = data.uuid;
+            showAlert('Registration successful! You can now login with your credentials.', 'success');
             
-            // Clear form
+            // Clear form and switch to login
             registerForm.reset();
+            setTimeout(() => {
+                showLoginForm();
+            }, 2000);
         } else {
             showAlert(data.detail || 'Registration failed');
         }
@@ -109,7 +107,6 @@ loginForm?.addEventListener('submit', async (e) => {
     clearAlerts();
     
     const name = document.getElementById('loginName').value;
-    const uuid = document.getElementById('loginUuid').value;
     const password = document.getElementById('loginPassword').value;
     
     try {
@@ -120,7 +117,6 @@ loginForm?.addEventListener('submit', async (e) => {
             },
             body: JSON.stringify({
                 name: name,
-                uuid: uuid,
                 password: password
             })
         });
